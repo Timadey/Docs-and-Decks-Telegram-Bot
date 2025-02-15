@@ -197,19 +197,19 @@ class AttendanceBot:
                     "⚠️ We couldn't find you in our registered records.\n\n"
                     "📝 **Please update your Telegram name** to match the name you used in registration (**First Name & Last Name**).\n\n"
                     "🔧 To update your name, go to your [Profile Settings](tg://settings).\n\n"
-                    "⏳ You have **5 minutes** to update it, or you will be removed automatically!"
+                   # "⏳ You have **5 minutes** to update it, or you will be removed automatically!"
                 ),
                 parse_mode=ParseMode.MARKDOWN,
                 reply_to_message_id=update.message.message_id
             )
-            self.pending_users[telegram_id] = {
-                    "chat_id": chat_id,
-                    "user_id": telegram_id,
-                    "warning_msg_id": warning_msg.message_id,
-                    "first_name": telegram_name,
-                    "attempts": 0  
-                }
-            context.job_queue.run_repeating(self.check_name_update, interval=50, first=50, context=telegram_id, name=str(telegram_id))
+            #self.pending_users[telegram_id] = {
+                 #   "chat_id": chat_id,
+                  #  "user_id": telegram_id,
+                   # "warning_msg_id": warning_msg.message_id,
+                    #"first_name": telegram_name,
+                   # "attempts": 0  
+               # }
+           # context.job_queue.run_repeating(self.check_name_update, interval=50, first=50, context=telegram_id, name=str(telegram_id))
         
         
 
