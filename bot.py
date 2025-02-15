@@ -276,19 +276,29 @@ class AttendanceBot:
     
     def mark_attendance(self, update, context):
         query = update.callback_query
-        if self.repository.mark_attendance(update.effective_user.id):
-            context.chat_data['attendees'] += 1
+        try:
+            if self.repository.mark_attendance(update.effective_user.id):
+                context.chat_data['attendees'] += 1
 
+                context.bot.answer_callback_query(
+                    callback_query_id=query.id,
+                    text=f"You are the #{context.chat_data['attendees']} to mark attendance.\n Score : 10 marks",
+                    show_alert=True)
+            else:
+                context.bot.answer_callback_query(
+                    callback_query_id=query.id,
+                    text="Your attendance is already marked",
+                    show_alert=True)
+        except Exception as e:
             context.bot.answer_callback_query(
-                callback_query_id=query.id,
-                text=f"You are the #{context.chat_data['attendees']} to mark attendance. Score : 10 marks",
-                show_alert=True)
-        else:
-            context.bot.answer_callback_query(
-                callback_query_id=query.id,
-                text="Your attendance is already marked",
-                show_alert=True)
+                    callback_query_id=query.id,
+                    text="Error marking attendance. Seems like your telegram is yet to be linked. Please use /validate_me command to link your telegram and try again",
+                    show_alert=True)
         query.answer()
+
+    def check_attendance(self, update, context):
+        attendance_count = context.chat_data['attendees']
+        update.message.reply_text(f"{attendance_count} participants have marked attendance", parse_mode="Markdown")
 
     def end_attendance(self, update, context):
         query = update.callback_query
