@@ -83,7 +83,42 @@ class AttendanceBot:
         )
         update.message.reply_text(assignment_message, parse_mode="Markdown")
 
+    def am_i_valid(self, update, context) -> None:
+        '''Allow users to check if their telegam is linked to the gsheet and link it if not'''
+        telegram_id = update.effective_user.id
+        telegram_name = f"{update.effective_user.first_name} {update.effective_user.last_name or ''}".strip()
+        chat_id = update.effective_chat.id
+        mention = f"[{update.effective_user.first_name}](tg://user?id={telegram_id})"
 
+        if self.repository.find_member_by_telegram_id(telegram_id):
+            update.message.reply_text("✅ You are a valid member and your Telegram is already linked!")
+        elif self.repository.update_telegram_id(telegram_name, telegram_id):
+            update.message.reply_text("🔄 Your Telegram ID was linked successfully! You are now a valid member.")
+        else:
+            warning_msg = update.message.reply_text(
+                text=(
+                    "⚠️ We couldn't find you in our registered records.\n\n"
+                    "📝 **Please update your Telegram name** to match the name you used in registration (**First Name & Last Name**).\n\n"
+                    "🔧 To update your name, go to your [Profile Settings](tg://settings).\n\n"
+                    "⏳ You have **5 minutes** to update it, or you will be removed automatically!"
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                reply_to_message_id=update.message.message_id
+            )
+            self.pending_users[telegram_id] = {
+                    "chat_id": chat_id,
+                    "user_id": telegram_id,
+                    "warning_msg_id": warning_msg.message_id,
+                    "first_name": telegram_name,
+                    "attempts": 0  
+                }
+            context.job_queue.run_repeating(self.check_name_update, interval=50, first=50, context=telegram_id, name=str(telegram_id))
+        
+        
+
+
+            
+    
     def handle_new_member(self, update, context):
         """Handles when a new member joins"""
         for member in update.message.new_chat_members:

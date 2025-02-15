@@ -12,8 +12,12 @@ class Repository:
     gsheet = client.open(Config.gsheet_name)
     participants_sheet = gsheet.worksheet("participants")
 
+    def find_member_by_telegram_id(self, telegram_id):
+        """Checks if the Telegram ID exists in the Google Sheet"""
+        telegram_ids = self.sheet.col_values(4)[1:]  # Get Telegram ID column (excluding header)
+        return telegram_id in telegram_ids
 
-    def update_telegram_id(self, telegram_name, telegram_id):
+    def find_participant_by_name(self, teleram_name):
         """Finds a user by name and updates their Telegram ID"""
         if self.telegram_id_exists(telegram_id):
             return True
@@ -21,11 +25,22 @@ class Repository:
         full_names = self.participants_sheet.col_values(2)
         full_name_parts = set(telegram_name.strip().lower().split())
 
-        for i, name in enumerate(full_names, start=1): 
-            if set(name.strip().lower().split()[:2]) == full_name_parts:
-                self.participants_sheet.update_cell(i, 4, telegram_id)  
+        for i, name in enumerate(full_names, start=1):
+            names = name.strip().lower().split()
+            last_first = names[:2]
+            last_middle = []
+            if len(names) > 2:
+                last_middle = [names[0], names[2]]
+            if last_first == full_name_parts or last_middle == full_name_parts:
+                return i
+        return False
+    
+    def update_telegram_id(self, telegram_name, telegram_id):
+        """Finds a user by name and updates their Telegram ID"""
+        name_row = self.find_participant_by_name(telegram_name)
+        if name_row:
+                self.participants_sheet.update_cell(name_row, 4, telegram_id)  
                 return True
-        
         return False
     
     def telegram_id_exists(self, telegram_id):
