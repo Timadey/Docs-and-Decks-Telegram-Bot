@@ -28,10 +28,10 @@ class Repository:
 
         for i, name in enumerate(full_names, start=1):
             names = name.strip().lower().split()
-            last_first = names[:2]
+            last_first = set(names[:2])
             last_middle = []
             if len(names) > 2:
-                last_middle = [names[0], names[2]]
+                last_middle = set([names[0], names[2]])
             if last_first == full_name_parts or last_middle == full_name_parts:
                 return i
         return False

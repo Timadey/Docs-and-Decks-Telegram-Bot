@@ -98,15 +98,15 @@ class AttendanceBot:
                 return
             
             # Format the assignments into a readable message
-            message = "📚 **List of all assignment**\n\n"
+            message = "📚 *List of all assignment*\n\n"
             for assignment in assignments:
                 message += (
-                    f"📌 **{assignment['Title']}**\n"
+                    f"📌 *{assignment['Title']}*\n"
                     f"🔗 [Submit Here]({assignment['Submission link']})\n"
-                    f"📅 **Deadline:** {assignment['Deadline']}\n"
-                    f"✅ **Score:** {assignment['Score']} points\n\n"
+                    f"📅 *Deadline:* {assignment['Deadline']}\n"
+                    f"✅ *Score:* {assignment['Score']} points\n\n"
                 )
-            
+            message +=  "⚠️ *Late submissions results in half marks*"
             # Send the formatted message
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
