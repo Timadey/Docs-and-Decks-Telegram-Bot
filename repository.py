@@ -11,13 +11,17 @@ class Repository:
 
     gsheet = client.open(Config.gsheet_name)
     participants_sheet = gsheet.worksheet("participants")
+    assignments_sheet = gsheet.worksheet("assignments")
+
+    def get_assignements(self):
+        return self.assignments_sheet.get_all_records()
 
     def find_member_by_telegram_id(self, telegram_id):
         """Checks if the Telegram ID exists in the Google Sheet"""
         telegram_ids = self.participants_sheet.col_values(4)[1:]  # Get Telegram ID column (excluding header)
         return telegram_id in telegram_ids
 
-    def find_participant_by_name(self, teleram_name):
+    def find_participant_by_name(self, telegram_name):
         """Finds a user by name and updates their Telegram ID"""
         full_names = self.participants_sheet.col_values(2)
         full_name_parts = set(telegram_name.strip().lower().split())

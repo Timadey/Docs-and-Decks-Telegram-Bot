@@ -53,6 +53,7 @@ class AttendanceBot:
             self.end_attendance, pattern='^' + r'end_attendance' + '$')
         new_member_handler = MessageHandler(Filters.status_update.new_chat_members, self.handle_new_member)
 
+        dispatcher.add_handler(CommandHandler("new_assignments", self.get_assignement))
         dispatcher.add_handler(CommandHandler("assignments", self.assignment_command))
         dispatcher.add_handler(CommandHandler("validate_me", self.validate_me))
 
@@ -83,7 +84,7 @@ class AttendanceBot:
             "⚠️ *Late submissions results in half marks*"
         )
         update.message.reply_text(assignment_message, parse_mode="Markdown")
-        
+
     def get_assignement(self, update, context):
         try:
             # Get all assignment data from the sheet
@@ -97,7 +98,7 @@ class AttendanceBot:
                 return
             
             # Format the assignments into a readable message
-            message = "📚 **Current Assignments**\n\n"
+            message = "📚 **List of all assignment**\n\n"
             for assignment in assignments:
                 message += (
                     f"📌 **{assignment['Title']}**\n"
