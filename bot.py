@@ -53,8 +53,8 @@ class AttendanceBot:
             self.end_attendance, pattern='^' + r'end_attendance' + '$')
         new_member_handler = MessageHandler(Filters.status_update.new_chat_members, self.handle_new_member)
 
-        dispatcher.add_handler(CommandHandler("new_assignments", self.get_assignement))
-        dispatcher.add_handler(CommandHandler("assignments", self.assignment_command))
+        dispatcher.add_handler(CommandHandler("recordings", self.get_recordings))
+        dispatcher.add_handler(CommandHandler("assignments", self.get_assignement))
         dispatcher.add_handler(CommandHandler("validate_me", self.validate_me))
 
         dispatcher.add_handler(start_handler)
@@ -75,15 +75,39 @@ class AttendanceBot:
         "I mark your attendance during sessions. \n"
         "In order to properly track your attendance, **please ensure your telegram first name and last name reflect the actual name** you used in registering for the program!")
 
-    def assignment_command(self, update, context) -> None:
-        """Handles the /assignment command by sending assignment submission details."""
-        assignment_message = (
-            "📌 *List of all assignment* 📌\n\n"
-            "1️⃣ Preassessment Survey Submissions (30 marks): https://forms.gle/1ejGhpZ7EiYXfLSJ8. \n Due Date: Thursday, 20th February, 2025, 11:59pm"
+    def get_recordings(self, update, context) -> None:
+        """Handles the /recordings command by sending recording link details."""
+        try:
+            # Get all assignment data from the sheet
+            recordings = self.repository.get_recordings()  # Fetch all rows (excluding headers)
             
-            "⚠️ *Late submissions results in half marks*"
-        )
-        update.message.reply_text(assignment_message, parse_mode="Markdown")
+            if not recordings:
+                context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text="📌 No session recordings available at the moment."
+                )
+                return
+            
+            # Format the recordings into a readable message
+            message = "📚 *List of all session recording link*\n\n"
+            for recording in recordings:
+                message += (
+                    f"📌 *{recording['Title']}*\n"
+                    f"🔗 [Video link]({recording['Link']})\n\n"
+                )
+            # Send the formatted message
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=message,
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True  # Prevents preview for links
+            )
+    
+        except Exception as e:
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=f"⚠️ Error recordings: {str(e)}"
+            )
 
     def get_assignement(self, update, context):
         try:

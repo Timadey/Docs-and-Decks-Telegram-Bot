@@ -12,9 +12,13 @@ class Repository:
     gsheet = client.open(Config.gsheet_name)
     participants_sheet = gsheet.worksheet("participants")
     assignments_sheet = gsheet.worksheet("assignments")
+    recordings_sheet = gsheet.worksheet("recordings")
 
     def get_assignements(self):
         return self.assignments_sheet.get_all_records()
+
+    def get_recordings(self):
+        return self.recordings_sheet.get_all_records()
 
     def find_member_by_telegram_id(self, telegram_id):
         """Checks if the Telegram ID exists in the Google Sheet"""
