@@ -84,8 +84,8 @@ class Repository:
             # Mark attendance
             self.participants_sheet.update_cell(cell.row, last_col_index, marks)
             return True  # Successfully marked
-        except Exception:
-            return False  # Telegram ID not found
+        except Exception as e:
+            raise Exception(f"Error marking attendance for Telegram ID {telegram_id}: {str(e)}")
     
     def count_last_attendance(self):
         """

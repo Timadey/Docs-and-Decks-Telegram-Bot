@@ -54,6 +54,7 @@ class AttendanceBot:
         new_member_handler = MessageHandler(Filters.status_update.new_chat_members, self.handle_new_member)
 
         dispatcher.add_handler(CommandHandler("assignments", self.assignment_command))
+        dispatcher.add_handler(CommandHandler("validate_me", self.validate_me))
 
         dispatcher.add_handler(start_handler)
         dispatcher.add_handler(start_attendance_handler)
@@ -83,7 +84,7 @@ class AttendanceBot:
         )
         update.message.reply_text(assignment_message, parse_mode="Markdown")
 
-    def am_i_valid(self, update, context) -> None:
+    def validate_me(self, update, context) -> None:
         '''Allow users to check if their telegam is linked to the gsheet and link it if not'''
         telegram_id = update.effective_user.id
         telegram_name = f"{update.effective_user.first_name} {update.effective_user.last_name or ''}".strip()
