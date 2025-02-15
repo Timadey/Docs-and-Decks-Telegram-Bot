@@ -53,6 +53,8 @@ class AttendanceBot:
             self.end_attendance, pattern='^' + r'end_attendance' + '$')
         new_member_handler = MessageHandler(Filters.status_update.new_chat_members, self.handle_new_member)
 
+        dispatcher.add_handler(CommandHandler("assignments", assignment_command))
+
         dispatcher.add_handler(start_handler)
         dispatcher.add_handler(start_attendance_handler)
         dispatcher.add_handler(attendance_handler)
@@ -71,6 +73,16 @@ class AttendanceBot:
         "I mark your attendance during sessions. \n"
         "In order to properly track your attendance, **please ensure your telegram first name and last name reflect the actual name** you used in registering for the program!")
 
+    def assignment_command(update: Update, context: CallbackContext) -> None:
+        """Handles the /assignment command by sending assignment submission details."""
+        assignment_message = (
+            "📌 *List of all assignment* 📌\n\n"
+            "1️⃣ Preassessment Survey Submissions (30 marks): https://forms.gle/1ejGhpZ7EiYXfLSJ8. \n"
+            
+            "⚠️ *Late submissions results in half marks*"
+        )
+    
+    update.message.reply_text(assignment_message, parse_mode="Markdown")
     def handle_new_member(self, update, context):
         """Handles when a new member joins"""
         for member in update.message.new_chat_members:
