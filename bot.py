@@ -77,7 +77,7 @@ class AttendanceBot:
         """Handles the /assignment command by sending assignment submission details."""
         assignment_message = (
             "📌 *List of all assignment* 📌\n\n"
-            "1️⃣ Preassessment Survey Submissions (30 marks): https://forms.gle/1ejGhpZ7EiYXfLSJ8. \n"
+            "1️⃣ Preassessment Survey Submissions (30 marks): https://forms.gle/1ejGhpZ7EiYXfLSJ8. \n Due Date: Thursday, 20th February, 2025, 11:59pm"
             
             "⚠️ *Late submissions results in half marks*"
         )
