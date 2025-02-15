@@ -83,6 +83,42 @@ class AttendanceBot:
             "⚠️ *Late submissions results in half marks*"
         )
         update.message.reply_text(assignment_message, parse_mode="Markdown")
+        
+    def get_assignement(self, update, context):
+        try:
+            # Get all assignment data from the sheet
+            assignments = self.repository.get_assignements()  # Fetch all rows (excluding headers)
+            
+            if not assignments:
+                context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text="📌 No assignments available at the moment."
+                )
+                return
+            
+            # Format the assignments into a readable message
+            message = "📚 **Current Assignments**\n\n"
+            for assignment in assignments:
+                message += (
+                    f"📌 **{assignment['Title']}**\n"
+                    f"🔗 [Submit Here]({assignment['Submission link']})\n"
+                    f"📅 **Deadline:** {assignment['Deadline']}\n"
+                    f"✅ **Score:** {assignment['Score']} points\n\n"
+                )
+            
+            # Send the formatted message
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=message,
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True  # Prevents preview for links
+            )
+    
+        except Exception as e:
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=f"⚠️ Error retrieving assignments: {str(e)}"
+            )
 
     def validate_me(self, update, context) -> None:
         '''Allow users to check if their telegam is linked to the gsheet and link it if not'''

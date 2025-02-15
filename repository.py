@@ -19,9 +19,6 @@ class Repository:
 
     def find_participant_by_name(self, teleram_name):
         """Finds a user by name and updates their Telegram ID"""
-        if self.telegram_id_exists(telegram_id):
-            return True
-        
         full_names = self.participants_sheet.col_values(2)
         full_name_parts = set(telegram_name.strip().lower().split())
 
@@ -37,6 +34,8 @@ class Repository:
     
     def update_telegram_id(self, telegram_name, telegram_id):
         """Finds a user by name and updates their Telegram ID"""
+        if self.telegram_id_exists(telegram_id):
+            return True
         name_row = self.find_participant_by_name(telegram_name)
         if name_row:
                 self.participants_sheet.update_cell(name_row, 4, telegram_id)  
