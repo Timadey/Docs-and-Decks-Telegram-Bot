@@ -14,7 +14,7 @@ class Repository:
 
     def find_member_by_telegram_id(self, telegram_id):
         """Checks if the Telegram ID exists in the Google Sheet"""
-        telegram_ids = self.sheet.col_values(4)[1:]  # Get Telegram ID column (excluding header)
+        telegram_ids = self.participants_sheet.col_values(4)[1:]  # Get Telegram ID column (excluding header)
         return telegram_id in telegram_ids
 
     def find_participant_by_name(self, teleram_name):
