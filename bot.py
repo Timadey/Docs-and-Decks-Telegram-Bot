@@ -55,6 +55,7 @@ class AttendanceBot:
 
         dispatcher.add_handler(CommandHandler("recordings", self.get_recordings))
         dispatcher.add_handler(CommandHandler("assignments", self.get_assignement))
+        dispatcher.add_handler(CommandHandler("resources", self.get_resources))
         dispatcher.add_handler(CommandHandler("validate_me", self.validate_me))
 
         dispatcher.add_handler(start_handler)
@@ -75,6 +76,40 @@ class AttendanceBot:
         "I mark your attendance during sessions. \n"
         "In order to properly track your attendance, **please ensure your telegram first name and last name reflect the actual name** you used in registering for the program!")
 
+    def get_resources(self, update, context) -> None:
+        """Handles the /resources command"""
+        try:
+            # Get all assignment data from the sheet
+            resources = self.repository.get_resources()  # Fetch all rows (excluding headers)
+            
+            if not resources:
+                context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text="📌 No resources available at the moment."
+                )
+                return
+            
+            # Format the resources into a readable message
+            message = "📚 *List of all resources*\n\n"
+            for res in resources:
+                message += (
+                    f"📌 *{res['Title']}*\n"
+                    f"🔗 [{res['Location']} link]({res['Link']})\n\n"
+                )
+            # Send the formatted message
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=message,
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True  # Prevents preview for links
+            )
+    
+        except Exception as e:
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=f"⚠️ Error fetching resources: {str(e)}"
+            )
+
     def get_recordings(self, update, context) -> None:
         """Handles the /recordings command by sending recording link details."""
         try:
@@ -93,7 +128,7 @@ class AttendanceBot:
             for recording in recordings:
                 message += (
                     f"📌 *{recording['Title']}*\n"
-                    f"🔗 [Video link]({recording['Link']})\n\n"
+                    f"🔗 [Go to Video]({recording['Link']})\n\n"
                 )
             # Send the formatted message
             context.bot.send_message(

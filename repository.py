@@ -13,9 +13,13 @@ class Repository:
     participants_sheet = gsheet.worksheet("participants")
     assignments_sheet = gsheet.worksheet("assignments")
     recordings_sheet = gsheet.worksheet("recordings")
+    resources_sheet = gsheet.worksheet("resources")
 
     def get_assignements(self):
         return self.assignments_sheet.get_all_records()
+
+    def get_resources(self):
+        return self.resources_sheet.get_all_records()
 
     def get_recordings(self):
         return self.recordings_sheet.get_all_records()
