@@ -42,10 +42,11 @@ class AssignmentHandler:
                 assignment_sheet = assignment['Sheet'].strip()
                 score = self.bot.repository.get_score(assignment_sheet, member_email) if member else None
                 assignment_score = assignment['Score']
+                icon = '&#10060;' if score is None else '&#9989;'
 
                 # Score display logic
                 score_text = (
-                    f"{'&#9989;' if score is None else '&#10060;'} <b>Score:</b> <code>{score}/{assignment_score}</code>"
+                    f"{icon} <b>Score:</b> <code>{score}/{assignment_score}</code>"
                     if score is not None else
                     "&#10060; <b>Score:</b> Not available"
                 )
