@@ -31,7 +31,7 @@ class Repository:
     def get_score(cls, assignment_sheet, member_email):
         """Finds a user's score in the assignment sheet based on their email."""
         try:
-            sheet = gsheet.worksheet(assignment_sheet)
+            sheet = cls.gsheet.worksheet(assignment_sheet)
             headers = sheet.row_values(1)
             
             # Find the column indexes for 'Email' and 'Score'
