@@ -35,7 +35,7 @@ class Repository:
             headers = sheet.row_values(1)
             
             # Find the column indexes for 'Email' and 'Score'
-            email_index = headers.index("Email") + 1  # Convert to 1-based index
+            email_index = headers.index("Email address") + 1  # Convert to 1-based index
             score_index = headers.index("Score") + 1  # Convert to 1-based index
             
             # Find the row where the Email is located

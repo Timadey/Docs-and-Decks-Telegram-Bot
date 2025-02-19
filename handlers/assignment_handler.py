@@ -20,7 +20,7 @@ class AssignmentHandler:
                 member_email = None
 
                 if member:
-                    member_email = member.get('Email')
+                    member_email = member.get('Email address')
                     if member_email:  # If email is present, they can view scores
                         can_view_score = True
             except ValueError as e:
