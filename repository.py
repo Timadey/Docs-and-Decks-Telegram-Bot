@@ -16,7 +16,7 @@ class Repository:
     resources_sheet = gsheet.worksheet("resources")
 
     @classmethod
-    def get_assignements(cls):
+    def get_assignments(cls):
         return cls.assignments_sheet.get_all_records()
 
     @classmethod
