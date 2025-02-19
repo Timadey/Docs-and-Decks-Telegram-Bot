@@ -15,99 +15,169 @@ class Repository:
     recordings_sheet = gsheet.worksheet("recordings")
     resources_sheet = gsheet.worksheet("resources")
 
-    def get_assignements(self):
-        return self.assignments_sheet.get_all_records()
+    @classmethod
+    def get_assignements(cls):
+        return cls.assignments_sheet.get_all_records()
 
-    def get_resources(self):
-        return self.resources_sheet.get_all_records()
+    @classmethod
+    def get_resources(cls):
+        return cls.resources_sheet.get_all_records()
 
-    def get_recordings(self):
-        return self.recordings_sheet.get_all_records()
+    @classmethod
+    def get_recordings(cls):
+        return cls.recordings_sheet.get_all_records()
 
-    def find_member_by_telegram_id(self, telegram_id):
+    @classmethod
+    def get_score(cls, assignment_sheet, member_email):
+        """Finds a user's score in the assignment sheet based on their email."""
+        try:
+            sheet = gsheet.worksheet(assignment_sheet)
+            headers = sheet.row_values(1)
+            
+            # Find the column indexes for 'Email' and 'Score'
+            email_index = headers.index("Email") + 1  # Convert to 1-based index
+            score_index = headers.index("Score") + 1  # Convert to 1-based index
+            
+            # Find the row where the Email is located
+            cell = sheet.find(str(member_email), in_column=email_index)
+            if not cell:
+                return 0  
+            # Fetch the score from the corresponding row
+            score = sheet.cell(cell.row, score_index).value
+            
+            return int(score) if score else 0  
+        except ValueError:
+            return 0  # If the email is not found in the sheet
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving score: {e}")
+
+
+    @classmethod
+    def __find_member_row_by_telegram_id(cls, telegram_id):
+        """Finds a user by Telegram ID and returns their row as a dictionary."""
+        try:
+            headers = self.participants_sheet.row_values(1) 
+            telegram_col_index = headers.index("Telegram ID") + 1  # Convert to 1-based index
+            cell = self.participants_sheet.find(str(telegram_id), in_column=telegram_col_index)
+            if not cell:
+                raise ValueError(f"Telegram ID {telegram_id} not found.")
+            return cell.row
+        except ValueError as ve:
+            raise ve  # Handle specific "not found" cases separately if needed
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving user data: {e}")
+
+    @classmethod
+    def get_member_by_telegram_id(cls, telegram_id):
+        """Finds a user by Telegram ID and returns their row as a dictionary."""
+        try:
+            headers = self.participants_sheet.row_values(1) 
+            cell_row = cls.__find_member_row_by_telegram_id(telegram_id)
+            user_row = self.participants_sheet.row_values(cell_row)
+            # Convert row values into a dictionary using column names
+            return dict(zip(headers, user_row))
+        except ValueError as ve:
+            raise ve  # Handle specific "not found" cases separately if needed
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving user data: {e}")
+
+
+    @classmethod
+    def find_member_by_telegram_id(cls, telegram_id):
         """Checks if the Telegram ID exists in the Google Sheet"""
-        telegram_ids = self.participants_sheet.col_values(4)[1:]  # Get Telegram ID column (excluding header)
+        telegram_ids = cls.participants_sheet.col_values(4)[1:]  
         return str(telegram_id) in telegram_ids
 
-    def find_participant_by_name(self, telegram_name):
+    @classmethod
+    def find_participant_by_name(cls, telegram_name):
         """Finds a user by name and updates their Telegram ID"""
-        full_names = self.participants_sheet.col_values(2)
-        full_name_parts = set(telegram_name.strip().lower().split())
+        full_names = cls.participants_sheet.col_values(2)
+        # full_name_parts = set(telegram_name.strip().lower().split())
+        tg_first_name , tg_last_name =  telegram_name.strip().lower().split()
+        full_name_parts = tg_first_name.strip().split() + tg_last_name.strip().split()
+        full_name_parts = set(full_name_parts)
 
         for i, name in enumerate(full_names, start=1):
             names = name.strip().lower().split()
             last_first = set(names[:2])
-            last_middle = []
+            last_middle = set()
+            everything = set()
             if len(names) > 2:
                 last_middle = set([names[0], names[2]])
-            if last_first == full_name_parts or last_middle == full_name_parts:
+                everything = set(names)
+            if last_first == full_name_parts or last_middle == full_name_parts or everything == names:
                 return i
         return False
     
-    def update_telegram_id(self, telegram_name, telegram_id):
+    @classmethod
+    def update_telegram_id(cls, telegram_name, telegram_id):
         """Finds a user by name and updates their Telegram ID"""
-        if self.telegram_id_exists(telegram_id):
+        if cls.telegram_id_exists(telegram_id):
             return True
-        name_row = self.find_participant_by_name(telegram_name)
+        name_row = cls.find_participant_by_name(telegram_name)
         if name_row:
-                self.participants_sheet.update_cell(name_row, 4, telegram_id)  
+                cls.participants_sheet.update_cell(name_row, 4, telegram_id)  
                 return True
         return False
     
-    def telegram_id_exists(self, telegram_id):
-        telegram_ids = self.participants_sheet.col_values(4)
+    @classmethod
+    def telegram_id_exists(cls, telegram_id):
+        telegram_ids = cls.participants_sheet.col_values(4)
         if telegram_id in telegram_ids:
             return True
         return False
     
-    def create_new_attendance_col(self):
+    @classmethod
+    def create_new_attendance_col(cls):
         """Creates a new column in Google Sheets for attendance"""
         date_str = datetime.today().strftime('%b %d')
 
         # Get the total number of columns in the sheet
-        header = self.participants_sheet.row_values(1)  # Get header row
+        header = cls.participants_sheet.row_values(1)  # Get header row
         num_cols = len(header)  
         new_col_index = num_cols + 1  
 
         # Expand sheet if needed
-        if new_col_index > self.participants_sheet.col_count:
-            self.participants_sheet.add_cols(new_col_index - self.participants_sheet.col_count)
+        if new_col_index > cls.participants_sheet.col_count:
+            cls.participants_sheet.add_cols(new_col_index - cls.participants_sheet.col_count)
 
         # Add the new attendance column
-        self.participants_sheet.update_cell(1, new_col_index, f"Attendance - {date_str}")
+        cls.participants_sheet.update_cell(1, new_col_index, f"Attendance - {date_str}")
 
         return new_col_index 
 
 
-    def mark_attendance(self, telegram_id, marks=10):
+    @classmethod
+    def mark_attendance(cls, telegram_id, marks=10):
         """Finds a user by Telegram ID and assigns attendance marks in the latest column if not already marked."""
         
         try:
-            cell = self.participants_sheet.find(str(telegram_id), in_column=4)  # Locate Telegram ID in column 4
-            headers = self.participants_sheet.row_values(1)  # Get column headers
+            cell = cls.participants_sheet.find(str(telegram_id), in_column=4)  # Locate Telegram ID in column 4
+            headers = cls.participants_sheet.row_values(1)  # Get column headers
             last_col_index = len(headers)  # Identify the last attendance column
             
             # Check if attendance is already marked
-            existing_mark = self.participants_sheet.cell(cell.row, last_col_index).value
+            existing_mark = cls.participants_sheet.cell(cell.row, last_col_index).value
             if existing_mark:  # If there's already a value, don't overwrite
                 return False  # Attendance already marked
             
             # Mark attendance
-            self.participants_sheet.update_cell(cell.row, last_col_index, marks)
+            cls.participants_sheet.update_cell(cell.row, last_col_index, marks)
             return True  # Successfully marked
         except Exception as e:
             raise Exception(f"Error marking attendance for Telegram ID {telegram_id}: {str(e)}")
     
-    def count_last_attendance(self):
+    @classmethod
+    def count_last_attendance(cls):
         """
         Finds the last attendance column and counts the number of non-empty rows.
         
         :return: Total rows with values in the last attendance column
         """
-        headers = self.participants_sheet.row_values(1)  # Get column headers
+        headers = cls.participants_sheet.row_values(1)  # Get column headers
         last_attendance_col = len(headers)  # Identify the last attendance column
         
-        col_values = self.participants_sheet.col_values(last_attendance_col)  # Get values in that column
+        col_values = cls.participants_sheet.col_values(last_attendance_col)  # Get values in that column
         non_empty_rows = len([val for val in col_values if val.strip()])  # Count non-empty rows
         
         return non_empty_rows - 1
