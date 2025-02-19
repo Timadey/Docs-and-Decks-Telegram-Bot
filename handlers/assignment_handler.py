@@ -31,34 +31,26 @@ class AssignmentHandler:
                 update.message.reply_text("📌 No assignments available at the moment.")
                 return
 
+
             message = "📚 *List of all assignments*\n\n"
-           
 
             for assignment in assignments:
-                assignment_title = assignment['Title']
-                assignment_deadline = assignment['Deadline']
-                assignment_link = escape_markdown(assignment['Submission link'])
-                assignment_date = assignment['Date']
-                assignment_score = escape_markdown(str(assignment['Score']))
-
                 assignment_sheet = assignment['Sheet'].strip()
-                score_text = "❌ *Score:* Not available"
+                score = self.bot.repository.get_score(assignment_sheet, member_email) if member else None
+                assignment_score = assignment['Score']
 
-                if can_view_score:
-                    score = self.bot.repository.get_score(assignment_sheet, member_email)
-                    icon = "✅" if score else "❌"
-                    score_text = f"{icon} *Score:* {escape_markdown(str(score))}/{assignment_score}"
+                score_text = f"{'✅' if score else '❌'} *Score:* `{score}/{assignment_score}`" if score is not None else "❌ Score: Not available"
 
                 message += (
-                    f"📌 *{assignment_date}: {assignment_title}*\n"
-                    f"_Due on {assignment_deadline}_ | [View Assignment]({assignment_link})\n"
+                    f"📌 *{assignment['Date']}: {assignment['Title']}*\n"
+                    f"_Due on {assignment['Deadline']} | [View Assignment]({assignment['Submission link']})_\n"
                     f"{score_text}\n\n"
                 )
 
-            if not can_view_score:
+            if not member:
                 message += (
-                    "⚠️ _Your Telegram is not linked, so you can't see your scores._\n"
-                    "👉 _Run `/validate_me` to link your Telegram and access your scores._"
+                    "⚠️ *Your Telegram is not linked, so you can't see your scores.*\n"
+                    "👉 Run /validate_me to link your Telegram and access your scores.\n"
                 )
 
             message += "\n⚠️ *Late submissions result in half marks.*"
