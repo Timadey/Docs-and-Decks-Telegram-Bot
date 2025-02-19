@@ -15,7 +15,7 @@ class AssignmentHandler:
             telegram_id = update.effective_user.id
             can_view_score = False
             try:
-                member = self.repository.get_member_by_telegram_id(telegram_id)
+                member = self.bot.repository.get_member_by_telegram_id(telegram_id)
                 member_email = None
 
                 if member:
