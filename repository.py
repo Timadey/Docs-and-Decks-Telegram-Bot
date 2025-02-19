@@ -105,7 +105,7 @@ class Repository:
             if len(names) > 2:
                 last_middle = set([names[0], names[2]])
                 everything = set(names)
-            if last_first == full_name_parts or last_middle == full_name_parts or everything == names:
+            if last_first == full_name_parts or last_middle == full_name_parts or everything == full_name_parts:
                 return i
         return False
     
