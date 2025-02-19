@@ -15,8 +15,8 @@ class AssignmentHandler:
             assignments = self.bot.repository.get_assignments()
             telegram_id = update.effective_user.id
             can_view_score = False
+            member = None
             try:
-                member = None
                 member = self.bot.repository.get_member_by_telegram_id(telegram_id)
                 member_email = None
 
@@ -25,8 +25,7 @@ class AssignmentHandler:
                     if member_email:  # If email is present, they can view scores
                         can_view_score = True
             except ValueError as e:
-                update.message.reply_text(f"⚠️ Error retrieving assignments: {str(e)}")
-                can_view_score = False
+                update.message.reply_text(f"⚠️ You are yet to link your telegram, you scores may not be visible. Run /validate_me to link yout telegram")
 
             if not assignments:
                 update.message.reply_text("📌 No assignments available at the moment.")
