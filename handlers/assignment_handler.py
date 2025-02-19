@@ -24,6 +24,7 @@ class AssignmentHandler:
                     if member_email:  # If email is present, they can view scores
                         can_view_score = True
             except ValueError as e:
+                update.message.reply_text(f"⚠️ Error retrieving assignments: {str(e)}")
                 can_view_score = False
 
             if not assignments:
