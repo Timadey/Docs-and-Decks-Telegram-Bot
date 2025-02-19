@@ -93,7 +93,11 @@ class Repository:
         """Finds a user by name and updates their Telegram ID"""
         full_names = cls.participants_sheet.col_values(2)
         # full_name_parts = set(telegram_name.strip().lower().split())
-        tg_first_name , tg_last_name =  telegram_name.strip().lower().split()
+        name_parts =  telegram_name.strip().lower().split()
+
+        tg_first_name = name_parts[0]
+        tg_last_name = "".join(name_parts[1:]) if len(name_parts) > 1 else ""
+        
         full_name_parts = tg_first_name.strip().split() + tg_last_name.strip().split()
         full_name_parts = set(full_name_parts)
 

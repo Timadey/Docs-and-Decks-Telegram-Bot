@@ -42,7 +42,7 @@ class AssignmentHandler:
                 assignment_sheet = assignment['Sheet'].strip()
                 score = self.bot.repository.get_score(assignment_sheet, member_email) if member else None
                 assignment_score = assignment['Score']
-                icon = '&#10060;' if score is None else '&#9989;'
+                icon = '&#10060;' if score is None or score == 0 else '&#9989;'
 
                 # Score display logic
                 score_text = (
