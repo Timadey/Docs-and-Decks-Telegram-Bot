@@ -43,7 +43,7 @@ class AssignmentHandler:
 
                 message += (
                     f"📌 *{assignment['Date']}: {assignment['Title']}*\n"
-                    f"_Due on {assignment['Deadline']} | [View Assignment]({assignment['Submission link']})_\n"
+                    f"_Due on {assignment['Deadline']} | {assignment['Submission link']}_\n"
                     f"{score_text}\n\n"
                 )
 
@@ -54,10 +54,7 @@ class AssignmentHandler:
                 )
 
             message += "\n⚠️ *Late submissions result in half marks.*"
-
-            update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-
-            update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+            update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True, reply_to_message_id=update.message.message_id)
 
         except Exception as e:
             update.message.reply_text(f"⚠️ Error retrieving assignments: {str(e)}")
