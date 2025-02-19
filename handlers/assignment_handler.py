@@ -16,45 +16,55 @@ class AssignmentHandler:
             telegram_id = update.effective_user.id
             can_view_score = False
             member = None
+            member_email = None
+
             try:
                 member = self.bot.repository.get_member_by_telegram_id(telegram_id)
-                member_email = None
 
                 if member:
                     member_email = member.get('Email address')
                     if member_email:  # If email is present, they can view scores
                         can_view_score = True
-            except ValueError as e:
-                update.message.reply_text(f"⚠️ You are yet to link your telegram, you scores may not be visible. Run /validate_me to link yout telegram")
+            except ValueError:
+                update.message.reply_text(
+                    "⚠️ Your Telegram is not linked, so your scores may not be visible.\n"
+                    "👉 Run /validate_me to link your Telegram.",
+                    reply_to_message_id=update.message.message_id
+                )
 
             if not assignments:
                 update.message.reply_text("📌 No assignments available at the moment.")
                 return
 
-
-            message = "📚 *List of all assignments*\n\n"
+            message = "<b>📚 List of all assignments</b>\n\n"
 
             for assignment in assignments:
                 assignment_sheet = assignment['Sheet'].strip()
                 score = self.bot.repository.get_score(assignment_sheet, member_email) if member else None
                 assignment_score = assignment['Score']
 
-                score_text = f"{'✅' if score else '❌'} *Score:* `{score}/{assignment_score}`" if score is not None else "❌ Score: Not available"
+                # Score display logic
+                score_text = (
+                    f"&#9989; <b>Score:</b> <code>{score}/{assignment_score}</code>"
+                    if score is not None else
+                    "&#10060; <b>Score:</b> Not available"
+                )
 
+                # Assignment details
                 message += (
-                    f"📌 *{assignment['Date']}: {assignment['Title']}*\n"
-                    f"_Due on {assignment['Deadline']} | {assignment['Submission link']}_\n"
+                    f"📌 <b>{assignment['Date']}: {assignment['Title']}</b>\n"
+                    f"<i>Due on {assignment['Deadline']} | "
+                    f"<a href='{assignment['Submission link']}'>View Assignment</a></i>\n"
                     f"{score_text}\n\n"
                 )
+            message += "\n⚠️ <->Late submissions result in half marks.</->"
 
-            if not member:
-                message += (
-                    "⚠️ *Your Telegram is not linked, so you can't see your scores.*\n"
-                    "👉 Run /validate_me to link your Telegram and access your scores.\n"
-                )
-
-            message += "\n⚠️ *Late submissions result in half marks.*"
-            update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True, reply_to_message_id=update.message.message_id)
+            update.message.reply_text(
+                message,
+                parse_mode=ParseMode.HTML,
+                disable_web_page_preview=True,
+                reply_to_message_id=update.message.message_id
+            )
 
         except Exception as e:
             update.message.reply_text(f"⚠️ Error retrieving assignments: {str(e)}")
