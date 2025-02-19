@@ -56,9 +56,9 @@ class Repository:
     def __find_member_row_by_telegram_id(cls, telegram_id):
         """Finds a user by Telegram ID and returns their row as a dictionary."""
         try:
-            headers = self.participants_sheet.row_values(1) 
+            headers = cls.participants_sheet.row_values(1) 
             telegram_col_index = headers.index("Telegram ID") + 1  # Convert to 1-based index
-            cell = self.participants_sheet.find(str(telegram_id), in_column=telegram_col_index)
+            cell = cls.participants_sheet.find(str(telegram_id), in_column=telegram_col_index)
             if not cell:
                 raise ValueError(f"Telegram ID {telegram_id} not found.")
             return cell.row
@@ -71,9 +71,9 @@ class Repository:
     def get_member_by_telegram_id(cls, telegram_id):
         """Finds a user by Telegram ID and returns their row as a dictionary."""
         try:
-            headers = self.participants_sheet.row_values(1) 
+            headers = cls.participants_sheet.row_values(1) 
             cell_row = cls.__find_member_row_by_telegram_id(telegram_id)
-            user_row = self.participants_sheet.row_values(cell_row)
+            user_row = cls.participants_sheet.row_values(cell_row)
             # Convert row values into a dictionary using column names
             return dict(zip(headers, user_row))
         except ValueError as ve:
