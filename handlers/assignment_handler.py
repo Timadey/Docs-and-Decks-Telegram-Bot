@@ -57,7 +57,7 @@ class AssignmentHandler:
                     f"<a href='{assignment['Submission link']}'>View Assignment</a></i>\n"
                     f"{score_text}\n\n"
                 )
-            message += "\n⚠️ <->Late submissions result in half marks.</->"
+            message += "\n⚠️ <i>Late submissions result in half marks.</i>"
 
             update.message.reply_text(
                 message,
