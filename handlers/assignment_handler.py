@@ -45,7 +45,8 @@ class AssignmentHandler:
 
                 if can_view_score:
                     score = self.bot.repository.get_score(assignment_sheet, member_email)
-                    score_text = f"{"✅" if score else "❌"} *Score:* {escape_markdown(str(score))}/{assignment_score}"
+                    icon = "✅" if score else "❌"
+                    score_text = f"{icon} *Score:* {escape_markdown(str(score))}/{assignment_score}"
 
                 message += (
                     f"📌 *{assignment_date}: {assignment_title}*\n"
