@@ -37,7 +37,7 @@ class AssignmentHandler:
             for assignment in assignments:
                 assignment_title = assignment['Title']
                 assignment_deadline = assignment['Deadline']
-                assignment_link = assignment['Submission link']
+                assignment_link = escape_markdown(assignment['Submission link'])
                 assignment_date = assignment['Date']
                 assignment_score = escape_markdown(str(assignment['Score']))
 
@@ -47,7 +47,7 @@ class AssignmentHandler:
                 if can_view_score:
                     score = self.bot.repository.get_score(assignment_sheet, member_email)
                     icon = "✅" if score else "❌"
-                    score_text = f"{icon} *Score:* {str(score)}/{assignment_score}"
+                    score_text = f"{icon} *Score:* {escape_markdown(str(score))}/{assignment_score}"
 
                 message += (
                     f"📌 *{assignment_date}: {assignment_title}*\n"
