@@ -45,7 +45,7 @@ class Repository:
             # Fetch the score from the corresponding row
             score = sheet.cell(cell.row, score_index).value
             
-            return int(score) if score else 0  
+            return score if score else 0  
         except ValueError:
             return 0  # If the email is not found in the sheet
         except Exception as e:
