@@ -46,7 +46,7 @@ class AssignmentHandler:
 
                 # Score display logic
                 score_text = (
-                    f"{icon} <b>Score:</b> <code>{score}{'/' + str(assignment_score) if not '/' in score else ''}</code>"
+                    f"{icon} <b>Score:</b> <code>{score}{'/' + str(assignment_score) if not '/' in str(score) else ''}</code>"
                     if score is not None else
                     "&#10060; <b>Score:</b> Not available"
                 )
