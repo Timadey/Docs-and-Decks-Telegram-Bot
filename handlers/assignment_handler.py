@@ -44,9 +44,12 @@ class AssignmentHandler:
                 assignment_score = assignment['Score']
                 icon = '&#10060;' if score is None or score == 0 else '&#9989;'
 
+                if '/' in str(score):
+                    score, _ = str(score).split('/')
+
                 # Score display logic
                 score_text = (
-                    f"{icon} <b>Score:</b> <code>{score}{'/' + str(assignment_score) if not '/' in str(score) else ''}</code>"
+                    f"{icon} <b>Score:</b> <code>{score}{'/' + str(assignment_score)}</code>"
                     if score is not None else
                     "&#10060; <b>Score:</b> Not available"
                 )
