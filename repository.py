@@ -52,12 +52,9 @@ class Repository:
             scores_dict = {headers[i]: scores[i] if i < len(scores) else "N/A" for i in range(len(headers))}
             total_score = self.score_sheet.acell("O1").value
 
-            print(headers)
-            print(scores_dict)
-
             return {
                 "Full Name": scores_dict.get("Full Name", "N/A"),
-                "Attendance": scores_dict.get("Attendance", "N/A"),
+                "Attendance": scores_dict.get("Attendance"),
                 "pre-assessment": scores_dict.get("pre-assessment", "N/A"),
                 "msword1": scores_dict.get("msword1", "N/A"),
                 "msword2": scores_dict.get("msword2", "N/A"),
