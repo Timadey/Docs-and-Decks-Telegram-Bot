@@ -46,7 +46,7 @@ class OverallScoreHandler:
                 final_message = "🎉 Congratulations! You are currently up to the certification requirements. Keep up the great work! 🚀"
             else:
                 eligibility_emoji = "❌"
-                final_message = "💡 Don't give up! Attend session and do your assignments well, and you'll improve. You can do this! 💪"
+                final_message = "💡 Don't give up! Attend sessions, do your assignments well, and you'll improve. You can do this! 💪"
 
             # Format the response message
             message = (
