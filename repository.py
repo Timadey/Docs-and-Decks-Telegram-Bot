@@ -14,6 +14,7 @@ class Repository:
     assignments_sheet = gsheet.worksheet("assignments")
     recordings_sheet = gsheet.worksheet("recordings")
     resources_sheet = gsheet.worksheet("resources")
+    score_sheet = gsheet.worksheet("score_sheet")
 
     @classmethod
     def get_assignments(cls):
@@ -27,6 +28,47 @@ class Repository:
     def get_recordings(cls):
         return cls.recordings_sheet.get_all_records()
 
+    def get_overall_score(self, member_email):
+        """Fetches all scores for a user based on their email."""
+        try:
+            if not member_email:
+                return None  # Email is required
+
+            headers = self.score_sheet.row_values(1)  # Fetch column headers
+
+            # Locate the 'Email address' column index
+            email_index = headers.index("Email address") + 1  # Google Sheets uses 1-based index
+
+            # Locate the row containing the member's email
+            cell = self.score_sheet.find(str(member_email), in_column=email_index)
+            if not cell:
+                return None  # Email not found
+
+            # Fetch all scores from that row
+            scores = self.score_sheet.row_values(cell.row)
+
+            # Create a dictionary mapping headers to values
+            scores_dict = {headers[i]: scores[i] if i < len(scores) else "N/A" for i in range(len(headers))}
+            total_score = self.gsheet.worksheet.acell("O1")
+
+            return {
+                "Full Name": scores_dict.get("Full Name", "N/A"),
+                "Attendance": scores_dict.get("Attendance", "N/A"),
+                "pre-assessment": scores_dict.get("pre-assessment", "N/A"),
+                "msword1": scores_dict.get("msword1", "N/A"),
+                "msword2": scores_dict.get("msword2", "N/A"),
+                "msword4": scores_dict.get("msword4", "N/A"),
+                "sum": scores_dict.get("sum", "N/A"),  # Total score
+                "status": scores_dict.get("status", "N/A"),  # Certification status
+                "total_score" :  total_score
+            }
+
+        except ValueError:
+            return None  # If the email is not found
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving scores: {e}")
+
+    
     @classmethod
     def get_score(cls, assignment_sheet, member_email):
         """Finds a user's score in the assignment sheet based on their email."""
