@@ -3,6 +3,7 @@ from handlers.resource_handler import ResourceHandler
 from handlers.assignment_handler import AssignmentHandler
 from handlers.recording_handler import RecordingHandler
 from handlers.member_handler import MemberHandler
+from handlers.score_handler import OverallScoreHandler
 
 class Handlers:
     def __init__(self, bot, dispatcher):
@@ -15,4 +16,5 @@ class Handlers:
         AssignmentHandler(self.bot, self.dispatcher).setup()
         RecordingHandler(self.bot, self.dispatcher).setup()
         MemberHandler(self.bot, self.dispatcher).setup()
+        OverallScoreHandler(self.bot, self.dispatcher).setup()
     
