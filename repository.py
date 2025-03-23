@@ -15,6 +15,7 @@ class Repository:
     recordings_sheet = gsheet.worksheet("recordings")
     resources_sheet = gsheet.worksheet("resources")
     score_sheet = gsheet.worksheet("score_sheet")
+    score_rules_sheet = gsheet.worksheet("score_rules")
 
     @classmethod
     def get_assignments(cls):
@@ -50,7 +51,7 @@ class Repository:
 
             # Create a dictionary mapping headers to values
             scores_dict = {headers[i]: scores[i] if i < len(scores) else "N/A" for i in range(len(headers))}
-            total_score = self.assignments_sheet.acell("L2").value
+            total_score = self.score_rules_sheet.acell("D2").value
 
             return {
                 "Full Name": scores_dict.get("Full Name", "N/A"),
