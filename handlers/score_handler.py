@@ -8,7 +8,7 @@ class OverallScoreHandler:
         self.dispatcher = dispatcher
 
     def setup(self):
-        self.dispatcher.add_handler(CommandHandler("my_score", self.get_scores))
+        self.dispatcher.add_handler(CommandHandler("my_score", self.get_overall_score))
 
     def get_overall_score(self, update, context):
         try:
@@ -51,7 +51,7 @@ class OverallScoreHandler:
                 f"📄 <b>MS Word 4 Love Feast:</b> {overall_score_data.get('msword4', 'N/A')}\n"
                 f"🔢 <b>Total Score:</b> {overall_score_data.get('sum', 'N/A')} / {overall_score_data.get('total_score', 'N/A')}\n"
                 f"📌 <b>Certification Status:</b> {overall_score_data.get('status', 'N/A')}\n"
-                f"📌 <b>You need 50% to be eleigible for certification</b>\n"
+                f"📌 <b>You need 50% to be eligible for certification</b>\n"
             )
 
             update.message.reply_text(
