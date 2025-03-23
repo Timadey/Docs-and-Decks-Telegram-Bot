@@ -28,6 +28,7 @@ class Repository:
     def get_recordings(cls):
         return cls.recordings_sheet.get_all_records()
 
+    @classmethod
     def get_overall_score(self, member_email):
         """Fetches all scores for a user based on their email."""
         try:
