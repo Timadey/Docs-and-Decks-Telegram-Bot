@@ -40,7 +40,13 @@ class OverallScoreHandler:
                 update.message.reply_text("⚠️ No score data found for you.")
                 return
 
-            eligibility_emoji = "✅" if overall_score_data.get('status', 'N/A') == "Eligible" else "❌"
+            # Determine eligibility emoji and message
+            if overall_score_data.get('status', 'N/A') == "Eligible":
+                eligibility_emoji = "✅"
+                final_message = "🎉 Congratulations! You are currently up to the certification requirements. Keep up the great work! 🚀"
+            else:
+                eligibility_emoji = "❌"
+                final_message = "💡 Don't give up! Attend session and do your assignments well, and you'll improve. You can do this! 💪"
 
             # Format the response message
             message = (
@@ -52,8 +58,8 @@ class OverallScoreHandler:
                 f"📄 <b>MS Word 2 Insert If You Can:</b> {overall_score_data.get('msword2', 'N/A')}\n"
                 f"📄 <b>MS Word 4 Love Feast:</b> {overall_score_data.get('msword4', 'N/A')}\n"
                 f"🔢 <b>Total Score:</b> {overall_score_data.get('sum', 'N/A')} / {overall_score_data.get('total_score', 'N/A')}\n"
-                f"{eligibility_emoji} <b>Certification Status:</b> {overall_score_data.get('status', 'N/A')}\n"
-                f"📌 <b>You need 50% to be eligible for certification</b>\n"
+                f"{eligibility_emoji} <b>Certification Status:</b> {overall_score_data.get('status', 'N/A')}\n\n"
+                f"{final_message}"
             )
 
             update.message.reply_text(
