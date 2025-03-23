@@ -28,6 +28,7 @@ class Repository:
     def get_recordings(cls):
         return cls.recordings_sheet.get_all_records()
 
+    @classmethod
     def get_overall_score(self, member_email):
         """Fetches all scores for a user based on their email."""
         try:
@@ -49,7 +50,7 @@ class Repository:
 
             # Create a dictionary mapping headers to values
             scores_dict = {headers[i]: scores[i] if i < len(scores) else "N/A" for i in range(len(headers))}
-            total_score = self.gsheet.worksheet.acell("O1")
+            total_score = self.score_sheet.acell("O1").value
 
             print(headers)
             print(scores_dict)
