@@ -51,6 +51,9 @@ class Repository:
             scores_dict = {headers[i]: scores[i] if i < len(scores) else "N/A" for i in range(len(headers))}
             total_score = self.gsheet.worksheet.acell("O1")
 
+            print(headers)
+            print(scores_dict)
+
             return {
                 "Full Name": scores_dict.get("Full Name", "N/A"),
                 "Attendance": scores_dict.get("Attendance", "N/A"),
