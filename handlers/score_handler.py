@@ -57,6 +57,7 @@ class OverallScoreHandler:
                 f"📄 <b>MS Word 1 Home Away:</b> {overall_score_data.get('msword1', 'N/A')}\n"
                 f"📄 <b>MS Word 2 Insert If You Can:</b> {overall_score_data.get('msword2', 'N/A')}\n"
                 f"📄 <b>MS Word 4 Love Feast:</b> {overall_score_data.get('msword4', 'N/A')}\n"
+                f"📄 <b>MS Excel Practical:</b> {overall_score_data.get('msexcel', 'N/A')}\n"
                 f"🔢 <b>Total Score:</b> {overall_score_data.get('sum', 'N/A')} / {overall_score_data.get('total_score', 'N/A')}\n"
                 f"{eligibility_emoji} <b>Certification Status:</b> {overall_score_data.get('status', 'N/A')}\n\n"
                 f"{final_message}"
