@@ -60,6 +60,7 @@ class Repository:
                 "msword1": scores_dict.get("msword1", "N/A"),
                 "msword2": scores_dict.get("msword2", "N/A"),
                 "msword4": scores_dict.get("msword4", "N/A"),
+                "msexcel": scores_dict.get("msexcel", "N/A"),
                 "sum": scores_dict.get("sum", "N/A"),  # Student's Total score
                 "status": scores_dict.get("status", "N/A"),  # Certification status
                 "total_score" :  total_score
