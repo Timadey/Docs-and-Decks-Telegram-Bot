@@ -132,13 +132,24 @@ class Repository(BaseRepository):
     @classmethod
     def find_member_by_telegram_id(cls, telegram_id):
         """Checks if the Telegram ID exists in the Google Sheet"""
-        telegram_ids = cls.participants_sheet.col_values(4)[1:]  
+        headers = cls.participants_sheet.row_values(1)
+        try:
+            col_index = headers.index("Telegram ID") + 1  # 1-based index for gspread
+        except ValueError:
+            raise RuntimeError("Telegram ID column not found in sheet headers")
+        telegram_ids = cls.participants_sheet.col_values(col_index)
+        telegram_ids = telegram_ids[1:]  
         return str(telegram_id) in telegram_ids
 
     @classmethod
     def find_participant_by_name(cls, telegram_name):
         """Finds a user by name and updates their Telegram ID"""
-        full_names = cls.participants_sheet.col_values(2)
+         headers = cls.participants_sheet.row_values(1)
+        try:
+            col_index = headers.index("Full Name") + 1  # 1-based index for gspread
+        except ValueError:
+            raise RuntimeError("Full Name column not found in sheet headers")
+        full_names = cls.participants_sheet.col_values(col_index)
         # full_name_parts = set(telegram_name.strip().lower().split())
         name_parts =  telegram_name.strip().lower().split()
 
@@ -173,8 +184,13 @@ class Repository(BaseRepository):
     
     @classmethod
     def telegram_id_exists(cls, telegram_id):
-        telegram_ids = cls.participants_sheet.col_values(4)
-        if telegram_id in telegram_ids:
+        headers = cls.participants_sheet.row_values(1)
+        try:
+            col_index = headers.index("Telegram ID") + 1  # 1-based index for gspread
+        except ValueError:
+            raise RuntimeError("Telegram ID column not found in sheet headers")
+        telegram_ids = cls.participants_sheet.col_values(col_index)
+        if str(telegram_id) in telegram_ids:
             return True
         return False
     
