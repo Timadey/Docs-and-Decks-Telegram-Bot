@@ -219,7 +219,9 @@ class Repository(BaseRepository):
         """Finds a user by Telegram ID and assigns attendance marks in the latest column if not already marked."""
         
         try:
-            cell = cls.participants_sheet.find(str(telegram_id), in_column=4)  # Locate Telegram ID in column 4
+            headers = cls.participants_sheet.row_values(1)
+            telegram_col_index = headers.index("Telegram ID") + 1  # 1-based index for gspread
+            cell = cls.participants_sheet.find(str(telegram_id), in_column=telegram_col_index)  # Locate Telegram ID by header
             headers = cls.participants_sheet.row_values(1)  # Get column headers
             last_col_index = len(headers)  # Identify the last attendance column
             
