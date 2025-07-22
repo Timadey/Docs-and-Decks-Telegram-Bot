@@ -144,7 +144,7 @@ class Repository(BaseRepository):
     @classmethod
     def find_participant_by_name(cls, telegram_name):
         """Finds a user by name and updates their Telegram ID"""
-         headers = cls.participants_sheet.row_values(1)
+        headers = cls.participants_sheet.row_values(1)
         try:
             col_index = headers.index("Full Name") + 1  # 1-based index for gspread
         except ValueError:
