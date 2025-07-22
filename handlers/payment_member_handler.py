@@ -12,6 +12,8 @@ class PaymentMemberHandler:
     def setup(self):
         self.dispatcher.add_handler(CommandHandler("validate_me", self.validate_payment))
         self.dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, self.handle_new_member))
+        # Add handler for payment reference replies
+        self.dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), self.handle_payment_reference_reply))
 
     def handle_new_member(self, update, context):
         for member in update.message.new_chat_members:
@@ -59,12 +61,27 @@ class PaymentMemberHandler:
         telegram_id = update.effective_user.id
         args = context.args
         if not args:
+            # Set flag to expect payment reference from this user
+            context.user_data['awaiting_payment_reference'] = True
             update.message.reply_text(
-                "❗ Please provide your payment reference.\n\nUsage: /validate_me <your_payment_reference>",
+                "💬 Please reply with your payment reference.",
                 reply_to_message_id=update.message.message_id
             )
             return
         payment_reference = args[0].strip()
+        self._process_payment_reference(update, context, payment_reference)
+
+    def handle_payment_reference_reply(self, update, context):
+        # Only process if we are expecting a payment reference from this user
+        if context.user_data.get('awaiting_payment_reference'):
+            payment_reference = update.message.text.strip()
+            # Clear the flag
+            context.user_data['awaiting_payment_reference'] = False
+            self._process_payment_reference(update, context, payment_reference)
+
+    def _process_payment_reference(self, update, context, payment_reference):
+        chat_id = update.effective_chat.id
+        telegram_id = update.effective_user.id
         try:
             email, row = self.bot.repository.find_participant_by_payment_reference(payment_reference)
             if not email:
