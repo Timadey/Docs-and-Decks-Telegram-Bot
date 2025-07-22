@@ -5,3 +5,5 @@ gcred.json
 test.py
 .venv
 .env
+.DS_Store
+gcred.json
