@@ -1,15 +1,15 @@
+from gspread.utils import ValueInputOption
+
 from config import Config
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-class Repository:
+from repository.base_repository import BaseRepository
 
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name(Config.gsheet_creds_file_path, scope)
-    client = gspread.authorize(creds)
 
-    gsheet = client.open(Config.gsheet_name)
+class Repository(BaseRepository):
+    gsheet = BaseRepository.client.open(Config.gsheet_name)
     participants_sheet = gsheet.worksheet("participants")
     assignments_sheet = gsheet.worksheet("assignments")
     recordings_sheet = gsheet.worksheet("recordings")
@@ -154,7 +154,7 @@ class Repository:
             last_middle = set()
             everything = set()
             if len(names) > 2:
-                last_middle = set([names[0], names[2]])
+                last_middle = {names[0], names[2]}
                 everything = set(names)
             if last_first == full_name_parts or last_middle == full_name_parts or everything == full_name_parts:
                 return i
@@ -232,4 +232,34 @@ class Repository:
         non_empty_rows = len([val for val in col_values if val.strip()])  # Count non-empty rows
         
         return non_empty_rows - 1
+ 
+    @classmethod
+    def find_participant_by_payment_reference(cls, payment_reference):
+        """Finds a user by payment reference and returns their email and row number."""
+        headers = cls.participants_sheet.row_values(1)
+        try:
+            ref_col_index = headers.index("Payment Reference") + 1  # 1-based index
+        except ValueError:
+            raise Exception("Payment Reference column not found in participants sheet.")
+        cell = cls.participants_sheet.find(str(payment_reference), in_column=ref_col_index)
+        if not cell:
+            return None, None
+        email_col_index = headers.index("Email address") + 1
+        email = cls.participants_sheet.cell(cell.row, email_col_index).value
+        return email, cell.row
+
+    @classmethod
+    def update_telegram_id_by_email(cls, email, telegram_id):
+        """Updates the Telegram ID for a user identified by email."""
+        headers = cls.participants_sheet.row_values(1)
+        try:
+            email_col_index = headers.index("Email address") + 1
+            telegram_col_index = headers.index("Telegram ID") + 1
+        except ValueError:
+            raise Exception("Email address or Telegram ID column not found in participants sheet.")
+        cell = cls.participants_sheet.find(str(email), in_column=email_col_index)
+        if not cell:
+            return False
+        cls.participants_sheet.update_cell(cell.row, telegram_col_index, telegram_id)
+        return True
  

@@ -1,7 +1,6 @@
 from telegram.ext import Updater
 import logging
 from handlers import Handlers
-from repository import Repository
 
 class AttendanceBot:
     def __init__(self, config, repo):
@@ -30,6 +29,6 @@ class AttendanceBot:
         logger.warning('Update "%s" caused error "%s"', update, context.error)
     
     def start(self, update, context):
-        update.message.reply_text("Welcome to the Docs and Decks Attendance Bot! \n"
+        update.message.reply_text("Welcome to the Docs and Decks Bot! \n"
         "I mark your attendance during sessions. \n"
         "In order to properly track your attendance, **please ensure your telegram first name and last name reflect the actual name** you used in registering for the program!")

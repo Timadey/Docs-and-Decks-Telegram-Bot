@@ -9,8 +9,9 @@ class MemberHandler:
         self.logger = logging.getLogger(__name__)
 
     def setup(self):
-        self.dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, self.handle_new_member))
-        self.dispatcher.add_handler(CommandHandler("validate_me", self.validate_me))
+        pass
+        # self.dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, self.handle_new_member))
+        # self.dispatcher.add_handler(CommandHandler("validate_me", self.validate_me))
 
     def handle_new_member(self, update, context):
         for member in update.message.new_chat_members:

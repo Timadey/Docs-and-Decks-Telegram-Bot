@@ -1,2 +1,7 @@
 __pycache__
 participants.csv
+.env
+gcred.json
+test.py
+.venv
+.env
