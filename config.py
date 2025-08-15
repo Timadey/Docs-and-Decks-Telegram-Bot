@@ -15,5 +15,6 @@ class Config:
     gsheet_name = os.environ.get("gsheet_name", None)
     server_url = os.environ.get("server_url", None)
     cohort2sheet=os.environ.get("cohort2sheet", None)
+    bot_name = os.environ.get("bot_name", "DND Bot")
     GROUP_LINK = os.environ.get("GROUP_LINK", "https://t.me/your_group_link_here")
 

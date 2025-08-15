@@ -29,6 +29,6 @@ class AttendanceBot:
         logger.warning('Update "%s" caused error "%s"', update, context.error)
     
     def start(self, update, context):
-        update.message.reply_text("Welcome to the Docs and Decks Bot! \n"
+        update.message.reply_text(f"Welcome to the {self.config.bot_name}! \n"
         "I mark your attendance during sessions. \n"
-        "In order to properly track your attendance, **please ensure your telegram first name and last name reflect the actual name** you used in registering for the program!")
+        "Please send your reference to get access to the group")
